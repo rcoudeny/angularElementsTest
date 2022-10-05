@@ -1,18 +1,28 @@
-import { NgModule } from '@angular/core';
+import { CounterInterface } from 'shared/CounterInterface';
+import { Injector, NgModule } from '@angular/core';
+import { createCustomElement, NgElement, WithProperties } from '@angular/elements';
 import { BrowserModule } from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+import { CounterComponent } from './widgets/counter/counter.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    CounterComponent
   ],
   imports: [
-    BrowserModule,
-    AppRoutingModule
+    BrowserModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [CounterComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor(private injector: Injector) {
+    const counterElement = createCustomElement(CounterComponent, { injector });
+    window.customElements.define('counter-widget', counterElement);
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'counter-widget': NgElement & WithProperties<{ acmWidget: CounterInterface }>;
+  }
+}
